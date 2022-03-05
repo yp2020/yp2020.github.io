@@ -5,6 +5,8 @@
 ---
 删除不需要的文件。。。
 留下自己看不懂，想学习的。
+![](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220305192025639.png?raw=true)
+
 ## 四、问题交流
 
 ![](https://github.com/fuzhengwei/small-spring/blob/main/docs/assets/img/bugstack-md.png?raw=true)

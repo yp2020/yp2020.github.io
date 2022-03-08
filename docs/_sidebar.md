@@ -3,3 +3,6 @@
    - 剑指Offer系列
        - [剑指 Offer 09. 用两个栈实现队列](/md/剑指Offer/剑指Offer09用两个栈实现队列.md)
        - [剑指 Offer 30. 包含min函数的栈](/md/剑指Offer/剑指Offer30包含min函数的栈.md)
+       - [剑指 Offer 06. 从尾到头打印链表](/md/剑指Offer/剑指Offer06从尾到头打印链表.md)
+       - [剑指 Offer 24. 反转链表](/md/剑指Offer/剑指Offer24反转链表.md)
+       - [剑指 Offer 35. 复杂链表的复制](/md/剑指Offer/剑指Offer35复杂链表的复制.md)

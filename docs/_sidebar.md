@@ -6,5 +6,7 @@
        - [剑指 Offer 06. 从尾到头打印链表](/md/剑指Offer/剑指Offer06从尾到头打印链表.md)
        - [剑指 Offer 24. 反转链表](/md/剑指Offer/剑指Offer24反转链表.md)
        - [剑指 Offer 35. 复杂链表的复制](/md/剑指Offer/剑指Offer35复杂链表的复制.md)
+       - [剑指 Offer 05. 替换空格](/md/剑指Offer/剑指Offer05替换空格.md)
+       - [剑指 Offer 58 - II. 左旋转字符串](/md/剑指Offer/剑指Offer58II左旋转字符串.md)
    - Redis 
        - [Redis 持久化](/md/Redis/持久化.md)

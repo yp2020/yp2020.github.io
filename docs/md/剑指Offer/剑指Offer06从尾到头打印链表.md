@@ -10,7 +10,7 @@
 
 ## 代码：
 
-```Jav
+```Java
 class Solution {
     public int[] reversePrint(ListNode head) {
         Stack<Integer> stack=new Stack<>();

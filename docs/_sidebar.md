@@ -8,5 +8,8 @@
        - [剑指 Offer 35. 复杂链表的复制](/md/剑指Offer/35复杂链表的复制.md)
        - [剑指 Offer 05. 替换空格](/md/剑指Offer/05替换空格.md)
        - [剑指 Offer 58 - II. 左旋转字符串](/md/剑指Offer/58II左旋转字符串.md)
+       - [剑指 Offer 03. 数组中重复的数字](/md/剑指Offer/03数组中重复的数字.md)
+       - [剑指 Offer 53 - I. 在排序数组中查找数字 I](/md/剑指Offer/53I在排序数组中查找数字.md)
+       - [剑指 Offer 53 - II. 0～n-1中缺失的数字](/md/剑指Offer/53II中缺失的数字.md)
    - Redis 
        - [Redis 持久化](/md/Redis/持久化.md)

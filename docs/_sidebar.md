@@ -17,5 +17,9 @@
        - [面试题32 - I. 从上到下打印二叉树](/md/剑指Offer/32I从上到下打印二叉树.md)
        - [剑指 Offer 32 - II. 从上到下打印二叉树 II](/md/剑指Offer/32II从上到下打印二叉树.md)
        - [剑指 Offer 32 - III. 从上到下打印二叉树 III](/md/剑指Offer/32III从上到下打印二叉树.md)
+       - [剑指 Offer 26. 树的子结构](/md/剑指Offer/26树的子结构.md)
+       - [剑指 Offer 27. 二叉树的镜像](/md/剑指Offer/27二叉树的镜像.md)
+       - [剑指 Offer 28. 对称的二叉树](/md/剑指Offer/28对称的二叉树.md)
+       - [动态规划](/md/剑指Offer/动态规划系列问题.md)
    - Redis 
        - [Redis 持久化](/md/Redis/持久化.md)

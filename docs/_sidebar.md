@@ -25,6 +25,6 @@
        
    - Redis 
    
-       - [Redis基本数据类型及API](/md/Redis/Redis基本数据类型.md)
+       - [Redis基本数据类型及API](/md/Redis/基础数据类型.md)
    
        - [Redis 持久化](/md/Redis/持久化.md)

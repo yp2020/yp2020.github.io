@@ -1,4 +1,5 @@
 - [:octocat: 首页](/README)
+
 - :memo: 目录
    - 剑指Offer系列
        - [剑指 Offer 09. 用两个栈实现队列](/md/剑指Offer/09用两个栈实现队列.md)
@@ -21,5 +22,9 @@
        - [剑指 Offer 27. 二叉树的镜像](/md/剑指Offer/27二叉树的镜像.md)
        - [剑指 Offer 28. 对称的二叉树](/md/剑指Offer/28对称的二叉树.md)
        - [动态规划](/md/剑指Offer/动态规划系列问题.md)
+       
    - Redis 
+   
+       - [Redis基本数据类型及API](/md/Redis/Redis基本数据类型.md)
+   
        - [Redis 持久化](/md/Redis/持久化.md)

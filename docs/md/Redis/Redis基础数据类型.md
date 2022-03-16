@@ -1,0 +1,504 @@
+## 全局命令
+
+1. 查看所有键
+
+   > keys *
+
+2. 键总数
+
+   > dbsize
+
+3. 检查键是否存在
+
+   > exists key 
+
+4. 删除键 
+
+   可以删除一个，也可以删除多个， 返回值为成功删除键的个数，删除不存在的键，返回值为 0；
+
+   > del key [key]
+
+5. 键过期
+
+   为键添加过期时间，当超过过期时间以后，会自动删除键，
+
+   > expire key seconds 
+
+6. 返回键的剩余过期时间,可能的返回情况如下：
+
+   - 大于等于 0 的整数：键的剩余过期时间
+   - -1 键没有设置过期时间，或者说是永远不过期
+   - -2 键不存在
+
+   > ttl key 
+
+7. 键的数据结构类型
+
+   > type key 
+
+   返回当前键的数据结构类型，可以是 string（字符串）、hash（哈希）、list（列表）、set（集合）、zset（有序集 合），但这些只是 `Redis` 对外的数据结构，每种数据结构都有自己的内部编码实现，而且不止 1 种。
+
+   
+
+   数据结构与内部编码实现分开，当我们改进内部编码时，外部数据结构的命令不需要改动。
+
+   ![image-20220316091329874](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316091329874.png)
+
+## Redis 五种基本数据结构
+
+### 字符串 
+
+`redis` 键都是 字符串类型，
+
+字符串类型的值实际可以 是字符串（简单的字符串、复杂的字符串（例如`JSON`、XML））、数字 （整数、浮点数），甚至是二进制（图片、音频、视频）。
+
+`Redis`  中的字符串是动态字符串，内部是可以修改的，像 `Java` 中的 `StringBuffer`，它采用分配冗余空间 的方式来减少内存的频繁分配。在 `Redis` 内部结构中，一般实际分配的内存会大于需要的内存，当字符串小于 1M 的时候，扩容都是在现有的空间基础上加倍，扩容每次扩 `1M` 空间，最大 `512MB`。
+
+字符串类型的值可以是数字，这也就是解释了 后面的 incr 等命令的来由。
+
+#### 常用命令
+
+1. 设置值
+
+   ![image-20220316092257168](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316092257168.png)
+
+   返回结果为 ok 表示设置成功 
+
+   set 命令有如下几个选项 
+
+   - EX seconds 为键设置过期时间，单位为 秒
+
+   - PX ....          同上，单位为 毫秒
+
+   - nx 键必须不存在，才可以设置成功，用于添加
+
+   - xx 键必须存在，才可以设置成功，用于更新。
+
+     
+
+   setnx 命令 同 set 的 nx 选项 
+
+   ![image-20220316092520822](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316092520822.png)
+
+   setex 命令，同 set 的 ex 选项 , 在给 key 设置 value 的同时，还设置过期时间。 
+
+   ![image-20220316092556388](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316092556388.png)
+
+   
+
+2. 获取值
+
+   ![image-20220316092835435](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316092835435.png)
+
+   要么获取值，要获取的键不存在，则返回 `nil`
+
+   
+
+3. 批量设置值
+
+   ![image-20220316092923201](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316092923201.png)
+
+4. 批量获取值
+
+   ![image-20220316092943636](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316092943636.png)
+
+5. 计数
+
+   ![image-20220316093026168](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316093026168.png)
+
+   `incr ` 命令用于对值做自增操作，返回值如下:
+
+- 值不是整数（想想上面的字符串类型的值可以是数字），返回错误
+- 值为整数 ，返回自增后的结果
+- 键不存在，按照值为 0 自增，返回结果为 1
+
+类似命令：
+
+- `decr`（自减）
+- `incrby`（自增,并指定了步长）
+- `decrby`（自减指定数字）
+- `incrbyfloat`（自增浮点数）
+   `decr` 自减
+
+#### setnx 的实际应用场景
+
+`Redis` 是单线程的，如果有多个客户端同时执行  `setnx key value `，根据 `setnx` 的特性只有 一个客户端可以设置成功， 可以用来做分布式锁。
+
+#### 批量设置命令的好处
+
+可以提高 效率
+
+一条命令处理时间= 命令时间 +网络时间
+
+批量处理命令可以将 n 次网络时间缩减为 1 次。
+
+但是注意命令数量过多的话，可能会造成 `redis` 阻塞
+
+#### 内部编码
+
+- int：8个字节的长整型。 
+- embstr：小于等于39个字节的字符串。 
+- raw：大于39个字节的字符串。
+
+#### 使用场景：
+
+1. 缓存
+
+   ![image-20220316094620441](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316094620441.png)
+
+2. 计数
+
+3. 共享 session  分布式Web 服务下，使用 Redis 将用户的Session进行集中管理，在这种模式下只要保证 Redis 是高可用和扩展性的，每次用户 更新或者查询登录信息都直接从 Redis 中集中获取。从而不需要重新登录。
+
+4. 限速
+
+---
+
+### 哈希
+
+在 Redis 中 哈希是指 形如：`value={{field1，value1}，...{fieldN，valueN}}` 这种结构，
+
+图示如下：
+
+![image-20220316144017523](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316144017523.png)
+
+#### 命令 
+
+1. 设置值 设置成功返回 1 ，否则返回 0 
+
+   ![image-20220316144204899](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316144204899.png)
+
+​     也有对应的 hsetnx 命令 ，类似于 setnx 只不过作用域是 `field`
+
+2. 获取值  注意是 field 对应的 value  如果 key 或者 field 不存在则返回 nil
+
+   ![image-20220316144331958](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316144331958.png)
+
+3. 删除 field, hdel会删除一个或多个field，返回结果为成功删除field的个数
+
+   ![image-20220316144602523](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316144602523.png)
+
+​       	直接删除 key 的命令是全局的，del key 
+
+4. 计算 field 个数 
+
+   ![image-20220316144730850](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316144730850.png)
+
+5. 批量设置或者批量获取 field -value 
+
+![image-20220316144923262](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316144923262.png)
+
+![image-20220316144906043](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316144906043.png)
+
+6. 判断 `field` 是否存在  存在返回 1 ，不存在 返回 0
+
+   ![image-20220316145108523](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316145108523.png)
+
+7. 获取所有的 field   返回指定哈希键所有的field
+
+   ![image-20220316145153303](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316145153303.png)
+
+8. 获取所有value
+
+   ![image-20220316145241907](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316145241907.png)
+
+9. 获取所有的field-value
+
+   ![image-20220316145333897](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316145333897.png)
+
+在使用hgetall时，如果哈希元素个数比较多，会存在阻塞Redis的可能
+
+10. hincrby和hincrbyfloat 给指定的value 自增，然后作用域是 field
+
+    ![image-20220316145500583](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316145500583.png)
+
+![image-20220316145549503](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316145549503.png)
+
+11. 计算value的字符串长度（需要Redis3.2以上）
+
+    ![image-20220316145641649](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316145641649.png)
+
+#### 内部编码
+
+- ziplist（压缩列表）：当哈希类型元素个数小于hash-max-ziplist-entries 配置（默认512个）、同时所有值都小于hash-max-ziplist-value配置（默认64 字节）时，Redis会使用ziplist作为哈希的内部实现。
+- hashtable（哈希表）：当哈希类型无法满足ziplist的条件时，Redis会使 用hashtable作为哈希的内部实现，因为此时ziplist的读写效率会下降，而 hashtable的读写时间复杂度为O（1）
+
+#### 使用场景
+
+缓存用户信息
+
+每一个用户属性使用的是 一对 `field-value` ,只用一个键保存。 
+
+### 列表  list
+
+列表中的每个字符串 称为元素（element），一个列表最多可以存储 2<sup>32</sup> -1 个元素
+
+列表类型的元素特点如下：
+
+1. 列表中的元素是有序的，可以根据下标来获取某个元素或者某个范围内的元素列表
+2. 列表中的元素允许重复
+
+索引下标的特点如下：
+
+1. 从左到右是 `0 `到 `n-1` 从右到左是 `-1` 到  `-n `
+
+#### 基本命令
+
+1. 添加操作 
+
+   - lpush /rpush  从左(右)边插入元素，也就是新插入的元素处于列表的最左(右)边
+
+     ![image-20220316150612410](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316150612410.png)
+
+   - linsert命令会从列表中找到等于pivot的元素，在其前（before）或者后 （after）插入一个新的元素value
+
+     返回结果为当前列表的长度。
+
+     ![image-20220316150915696](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316150915696.png)
+
+2. 查找操作
+
+   - lrange 获取指定 索引 范围内的所有元素 注意这个命令是闭区间。[start,top]
+
+     ![image-20220316151527981](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316151527981.png)
+
+   - lindex 获取列表指定下标的元素
+
+     ![image-20220316152033661](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316152033661.png)
+
+   - llen 获取列表长度
+
+     ​					 ![image-20220316152110861](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316152110861.png)
+
+3. 删除操作
+
+   - lpop rpop 从列表左(右)侧弹出元素
+
+   ​    ![image-20220316152307431](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316152307431.png)
+
+   - 删除指定元素
+
+     ![image-20220316152335476](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316152335476.png)
+
+      		 count>0，从左到右，删除最多count个元素。
+
+     ​              count<0，从右到左，删除最多count绝对值个元素。 
+
+     ​               count=0，删除所有。
+   
+   - 按照索引范围修建列表，让列表只保留区间内的元素，不在区间内的元素会被删除。
+   
+     ![image-20220316152507933](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316152507933.png)
+   
+     
+
+4. 修改
+
+   修改指定下标的元素
+
+   ![image-20220316152641549](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316152641549.png)
+
+   
+
+5. 阻塞操作
+
+   阻塞式弹出，
+
+   - 如果列表里没有元素，就会一直阻塞住，直到超过设置的时间为止（如果 timeout==0）那么会一直阻塞，如果在阻塞的时候，列表中加入了数据，那么客户端就可以立即返回。
+   - 如果列表里有元素，客户端会立即返回
+
+   blpop 或者 brpop
+
+   ![image-20220316152751157](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316152751157.png)
+
+​          注意：
+
+- 如果是多个键，那么brpop会从左至右遍历键，一旦有一个键 能弹出元素，客户端立即返回
+- 如果多个客户端对同一个键执行brpop，那么最先执行brpop命 令的客户端可以获取到弹出的值
+
+#### 内部编码
+
+- ziplist（压缩列表）：当列表的元素个数小于list-max-ziplist-entries配置 （默认512个），同时列表中每个元素的值都小于list-max-ziplist-value配置时 （默认64字节），Redis会选用ziplist来作为列表的内部实现来减少内存的使 用。 
+- linkedlist（链表）：当列表类型无法满足ziplist的条件时，Redis会使用 linkedlist作为列表的内部实现。
+
+#### 使用场景：
+
+- 消息队列  Redis的lpush+brpop 命令组合即可实现阻塞队列，生产者客户端使用 lrpush 从列表左侧插入元素，多个消费者客户端使用 brpop 命令 阻塞式的“抢”列表尾部的元素，多个客户端保证了消费的负载均衡和高可用性。 
+
+  ![image-20220316153338068](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316153338068.png)
+
+- 文章列表： 每个用户有属于自己的文章列表，现需要分页展示文章列表。此时可以 考虑使用列表，因为列表不但是有序的，同时支持按照索引范围获取元素。
+
+- lpush+lpop=Stack（栈） 
+
+- lpush+rpop=Queue（队列） 
+
+- lpsh+ltrim=Capped Collection（有限集合） 
+
+- lpush+brpop=Message Queue（消息队列）  
+
+### 集合 Set
+
+集合，不允许元素重复，并且元素是无序的。
+
+![image-20220316153558957](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316153558957.png)
+
+#### 常用命令
+
+##### 集合内部：
+
+1. 添加元素到一个 key 中，返回结果为添加成功的元素个数
+
+   ![image-20220316153651946](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316153651946.png)
+
+2. 删除元素，返回结果为成功删除元素的个数
+
+   ![image-20220316153742039](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316153742039.png)
+
+3. 计算集合元素个数 
+
+   ![image-20220316153813686](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316153813686.png)
+
+4. 判断元素是否在集合中，给定元素element在集合内返回1，反之返回 0
+
+   ![image-20220316153932346](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316153932346.png)
+
+5. 随机返回 count 个元素，默认为 1 
+
+   ![image-20220316154046891](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316154046891.png)
+
+6. spop 操作可以从集合中随机弹出一个元素 ，类似的还有 srandmember 这个是从集合中选出元素，但是不删除。
+
+   ![image-20220316154122529](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316154122529.png)
+
+7. 获取所有元素
+
+   ![image-20220316154315985](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316154315985.png)
+
+   
+
+##### 集合间操作：
+
+1. 求多个集合的交集
+
+   ![image-20220316154539918](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316154539918.png)
+
+2. 求多个集合的并集
+
+   ![image-20220316154631264](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316154631264.png)
+
+3. 求多个集合的差集
+
+   ![image-20220316154648930](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316154648930.png)
+
+   ![image-20220316154515329](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316154515329.png)
+
+4. 将交集、并集、差集的结果保存
+
+![image-20220316154754550](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316154754550.png)
+
+#### 内部编码：
+
+- intset（整数集合）：当集合中的元素都是整数且元素个数小于set-maxintset-entries配置（默认512个）时，Redis会选用intset来作为集合的内部实 现，从而减少内存的使用。 
+
+- hashtable（哈希表）：当集合类型无法满足intset的条件时，Redis会使 用hashtable作为集合的内部实现。
+
+  
+
+#### 使用场景
+
+集合类型比较典型的使用场景是标签（tag），然后可以对标签求交集，得到共同关注的人。
+
+
+
+
+### ZSet
+
+这是一个有序的集合，每一个元素有一个分数 `score`选项，作为排序的依据。
+
+元素不可以重复，但是分数可以重复
+
+#### 常用命令
+
+##### 集合内部：
+
+1. 添加成员，返回结果代表成功添加成员的个数
+
+   ![image-20220316160524801](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316160524801.png)
+
+   Redis3.2为zadd命令添加了nx、xx、ch、incr四个选项： 
+
+   - nx：member必须不存在，才可以设置成功，用于添加
+   - xx：member必须存在，才可以设置成功，用于更新
+   - ch：返回此次操作后，有序集合元素和分数发生变化的个数 
+   - incr：对score做增加，相当于后面介绍的zincrby
+
+2. 计算成员个数
+
+   ![image-20220316160620512](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316160620512.png)
+
+3. 计算某个成员的分数，成员不存在，返回 nil
+
+   ![image-20220316160638659](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316160638659.png)
+
+4. 计算成员的排名,zrank是从分数从低到高返回排名，zrevrank反之,排名从 0开始计算。
+
+   ![image-20220316160743471](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316160743471.png)
+
+5. 删除成员， 返回结果为成功删除的个数
+
+   ![image-20220316160758307](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316160758307.png)
+
+6. 增加成员的分数
+
+   ![image-20220316160839541](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316160839541.png)
+
+7. 返回指定排名范围的成员 ，有序集合是按照分值排名的，zrange是从低到高返回，zrevrange反之。
+
+   ![image-20220316160910939](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316160910939.png)
+
+8. 返回指定分数范围的成员， 其中zrangebyscore按照分数从低到高返回，zrevrangebyscore反之
+
+   同时min和max还支持开区间（小括号）和闭区间（中括号），-inf和 +inf分别代表无限小和无限大
+
+   ![image-20220316160934366](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316160934366.png)
+
+9. 返回指定分数范围成员个数
+
+   ![image-20220316161030253](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316161030253.png)
+
+10. 删除指定排名内的升序元素
+
+    ![image-20220316161122628](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316161122628.png)
+
+11. 删除指定分数范围的成员
+
+![image-20220316161143827](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316161143827.png)
+
+##### 集合之间：
+
+1. zinterstore 求交集
+
+   ![](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316161344182.png)
+
+2. 并集
+
+   ![image-20220316161426767](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220316161426767.png)
+
+参数意义如下：
+
+- destination：交集计算结果保存到这个键。 
+- numkeys：需要做交集计算键的个数。
+- key[key...]：需要做交集计算的键。 
+- weights weight[weight...]：每个键的权重，在做交集计算时，每个键中 的每个member会将自己分数乘以这个权重，每个键的权重默认是1。
+- aggregate sum|min|max：计算成员交集后，分值可以按照sum（和）、 min（最小值）、max（最大值）做汇总，默认值是sum
+
+#### 内部编码
+
+- ziplist（压缩列表）：当有序集合的元素个数小于zset-max-ziplistentries配置（默认128个），同时每个元素的值都小于zset-max-ziplist-value配 置（默认64字节）时，Redis会用ziplist来作为有序集合的内部实现，ziplist 可以有效减少内存的使用。 
+- skiplist（跳跃表）：当ziplist条件不满足时，有序集合会使用skiplist作 为内部实现，因为此时ziplist的读写效率会下降。
+
+#### 使用场景：
+
+1. 排行榜系统，利用某个维度做排序，比如点赞数，就可以做到，给用户点赞，
+

@@ -15,20 +15,31 @@
        - [剑指 Offer 04. 二维数组中的查找](/md/剑指Offer/04二维数组中的查找.md)
        - [剑指 Offer 11. 旋转数组的最小数字](/md/剑指Offer/11旋转数组的最小数字.md)
        - [面试题50. 第一个只出现一次的字符](/md/剑指Offer/50第一个只出现一次的字符.md)
+       
+       ## 搜索与回溯算法
+       
        - [面试题32 - I. 从上到下打印二叉树](/md/剑指Offer/32I从上到下打印二叉树.md)
        - [剑指 Offer 32 - II. 从上到下打印二叉树 II](/md/剑指Offer/32II从上到下打印二叉树.md)
        - [剑指 Offer 32 - III. 从上到下打印二叉树 III](/md/剑指Offer/32III从上到下打印二叉树.md)
        - [剑指 Offer 26. 树的子结构](/md/剑指Offer/26树的子结构.md)
        - [剑指 Offer 27. 二叉树的镜像](/md/剑指Offer/27二叉树的镜像.md)
        - [剑指 Offer 28. 对称的二叉树](/md/剑指Offer/28对称的二叉树.md)
+       
+       ## 动态规划
+       
        - [动态规划](/md/剑指Offer/动态规划系列问题.md)
+       
+       ## 双指针
+       
        - [剑指 Offer 18. 删除链表的节点](/md/剑指Offer/18删除链表的节点.md)
        - [剑指 Offer 22. 链表中倒数第k个节点](/md/剑指Offer/22链表中倒数第k个节点.md)
        - [剑指 Offer 25. 合并两个排序的链表](/md/剑指Offer/25合并两个排序的链表.md)
        - [剑指 Offer 52. 两个链表的第一个公共节点](/md/剑指Offer/52两个链表的第一个公共节点.md)
+       - [剑指 Offer 21. 调整数组顺序使奇数位于偶数前面](https://leetcode-cn.com/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/)
+       - [剑指 Offer 57. 和为s的两个数字](https://leetcode-cn.com/problems/he-wei-sde-liang-ge-shu-zi-lcof/)
+       - [剑指 Offer 58 - I. 翻转单词顺序](https://leetcode-cn.com/problems/fan-zhuan-dan-ci-shun-xu-lcof/)
        
    - Redis 
    
        - [Redis基本数据类型及API](/md/Redis/基础数据类型.md)
-   
-       - [Redis 持久化](/md/Redis/持久化.md)
+   - [Redis 持久化](/md/Redis/持久化.md)

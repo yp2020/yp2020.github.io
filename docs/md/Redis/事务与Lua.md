@@ -10,7 +10,7 @@
 
 如果每一次事务操作涉及到的 命令比较多，可以通过 pipeline 来优化指令执行，提高执行效率。
 
-![image-20220208212322300](https://gitee.com/peng_beihai/pics/raw/master/img/image-20220208212322300.png)
+![image-20220208212322300](https://wayne6.oss-cn-hangzhou.aliyuncs.com/img/image-20220208212322300.png)
 
 返回 `QUEUED`代表命令没有真正的被执行，而是暂时保存在 `Redis` 中。
 

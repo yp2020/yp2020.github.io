@@ -67,4 +67,7 @@
        - 小功能大用处
          - [Pipeline](/md/Redis/Pipeline.md)
          - [事务与 Lua](/md/Redis/事务与Lua.md)
+         - [Bit操作](/md/Redis/Bit操作.md)
+         - [Geo](/md/Redis/Geo.md)
+         - [HyperLogLog](/md/Redis/HyperLogLog.md)
        - [Redis 持久化](/md/Redis/持久化.md)
